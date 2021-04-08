@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+
+<script>
+  //网络请求一、请求二都请求完成才能完成下面的需求
+  // Promise.all([
+  //     new Promise((resolve, reject) => {
+  //       $ajax({
+  //         url: 'url1',
+  //         success: function (data) {
+  //           resolve(data)
+  //         }
+  //       })
+  //     }),
+  //     new Promise((resolve, reject) => {
+  //       $ajax({
+  //         url: 'url2',
+  //         success: function (data) {
+  //           resolve(data)
+  //         }
+  //       })
+  //     })
+  // ]).then(results => {
+  //   results[0],results[1]
+  // })
+
+  Promise.all([
+      new Promise((resolve, reject) => {
+        setTimeout(() => {
+          // resolve('result1')
+          resolve({name: 'kobe', age: 19})
+
+        },4000)
+      }),
+    new Promise((resolve, reject) => {
+      setTimeout(() => {
+        // resolve('result2')
+        resolve({name: 'sht', age: 18})
+
+      },3000)
+    })
+  ]).then(results => {
+    console.log(results);
+  })
+
+</script>
+
+</body>
+</html>

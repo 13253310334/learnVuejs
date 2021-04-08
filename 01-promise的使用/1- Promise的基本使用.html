@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+
+<script>
+  // 1. 使用setTimeout
+  // setTimeout(() => {
+  //   console.log('hello');
+  // }, 1000)
+
+  //参数是函数
+  //resolve和reject本身也是函数
+  //异步操作
+
+  // new Promise((resolve,reject) => {
+  //   setTimeout(() => {
+  //     console.log('hello');
+  //     console.log('hello');
+  //     setTimeout(() => {
+  //       console.log('vue');
+  //       console.log('vue');
+  //       console.log('vue');
+  //       setTimeout(() => {
+  //         console.log('webpack');
+  //         console.log('webpack');
+  //       },1000)
+  //     },1000)
+  //   }, 1000)
+  // })
+
+
+  
+  //什么情况下会用到Promise
+  //一般情况下是有异步操作时，使用Promise对这个异步操作进行封装
+  //new -> 构造函数（1.保存了一些状态信息 2.执行传入的函数）
+  //在执行传入的回调函数时，会传入两个参数，resolve，reject，他俩本身又是函数
+  new Promise((resolve, reject) => { //接下来可以做你想做的异步操作
+    setTimeout((data) => {
+      //网络请求成功时调用resolve
+      // resolve(data) //data = 'Hello World'
+      //失败时调用reject
+      reject('error message')
+    },1000)
+  }).then((data) => {
+    //这里已经将网络请求的代码放到这里来了。例如100行处理代码
+    console.log(data); //
+  }).catch((err) => {
+    //对错误进行捕获
+    console.log(err);
+  })
+
+
+
+
+
+
+</script>
+</body>
+</html>

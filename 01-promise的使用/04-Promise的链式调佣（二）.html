@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+
+<script>
+  //wrapped into (包裹)
+  //网络请求：aaa  然后自己处理（） 将结果传回下一步
+  //处理：aaa 拼接 111  然后自己处理（） 将结果传回下一步
+  //aaa 111 拼接222  ......
+  // new Promise((resolve, reject) => {
+  //   setTimeout(() => {
+  //     resolve('aaa')
+  //   },1000)
+  // }).then(res => {
+  //   console.log(res,'第一次处理后得到的代码结果');
+  //
+  //   return new Promise((resolve, reject) => {
+  //     // resolve(res + '111')
+  //     reject('error')
+  //   })
+  // }).then(res => {
+  //   console.log(res, '第二次处理后得到的');
+  //
+  //   return new Promise(resolve => {
+  //     resolve(res + '222')
+  //   })
+  // }).then(res => {
+  //   console.log(res, '第三次处理后得到的');
+  // }).catch(err => {
+  //   console.log(err);
+  // })
+
+
+  // 简写
+
+  // new Promise((resolve, reject) => {
+  //   setTimeout(() => {
+  //     resolve('aaa')
+  //   },1000)
+  // }).then(res => {
+  //   console.log(res,'第一次处理后得到的代码结果');
+  //
+  //   return Promise.resolve(res + '111')
+  //
+  //   // return new Promise(resolve => {
+  //   //   resolve(res + '111')
+  //   // })
+  // }).then(res => {
+  //   console.log(res, '第二次处理后得到的');
+  //
+  //   return Promise.resolve(res + '222')
+  //
+  //   // return new Promise(resolve => {
+  //   //   resolve(res + '222')
+  //   // })
+  // }).then(res => {
+  //   console.log(res, '第三次处理后得到的');
+  // })
+
+
+
+  //再简写
+
+  // new Promise((resolve, reject) => {
+  //   setTimeout(() => {
+  //     resolve('aaa')
+  //   },1000)
+  // }).then(res => {
+  //   console.log(res,'第一次处理后得到的代码结果');
+  //
+  //   return res + '111'
+  //   // return Promise.resolve(res + '111')
+  //
+  // }).then(res => {
+  //   console.log(res, '第二次处理后得到的');
+  //
+  //   return res + '222'
+  //   // return Promise.resolve(res + '222')
+  //
+  // }).then(res => {
+  //   console.log(res, '第三次处理后得到的');
+  // })
+
+
+  //带reject参数的代码块简写
+  new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve('aaa')
+    },1000)
+  }).then(res => {
+    console.log(res,'第一次处理后得到的代码结果');
+
+    // return  Promise.reject('error message') //第一种
+    throw 'error message'  //第二种
+
+  }).then(res => {
+    console.log(res, '第二次处理后得到的');
+
+    return new Promise(resolve => {
+      resolve(res + '222')
+    })
+  }).then(res => {
+    console.log(res, '第三次处理后得到的');
+  }).catch(err => {
+    console.log(err);
+  })
+
+</script>
+</body>
+</html>

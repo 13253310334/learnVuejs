@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+
+<script>
+  new Promise((resolve,reject) => {
+    //第一次请求的代码
+    setTimeout(() => {
+      resolve() //调一下resolve
+    },1000)
+  }).then(() => {
+    //第一次处理的代码
+        console.log('hello');
+        console.log('hello');
+        console.log('hello');
+    return new Promise((resolve, reject) => {
+      //第二次请求的代码
+      setTimeout(() => {
+        resolve()
+      },2000)
+    })
+  }).then(() => {
+          //第二次处理的代码
+          console.log('vue');
+          console.log('vue');
+          console.log('vue');
+    return new Promise((resolve,reject) => {
+            //第三次请求的代码
+            setTimeout(() => {
+              resolve()
+            },3000)
+          })
+  }).then(() => {
+    //第三次处理的代码
+    console.log('webpack');
+    console.log('webpack');
+    console.log('webpack');
+  })
+</script>
+</body>
+</html>
