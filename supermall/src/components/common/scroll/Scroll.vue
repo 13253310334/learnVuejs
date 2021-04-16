@@ -24,7 +24,8 @@
     },
     data() {
       return {
-        scroll: null
+        scroll: null,
+        default: false
       }
     },
     mounted() {
@@ -36,7 +37,8 @@
         pullUpLoad: this.pullUpLoad,
         // pullUpLoad: true,/*这句加上的话默认监控打印，封装失效*/
         mouseWheel: true,
-        observeDOM: true
+        observeDOM: true,
+        observeImage: true,
       })
       // this.scroll.scrollTo(0, 0)
 
@@ -45,12 +47,21 @@
         // console.log(position);
         this.$emit('scroll', position)  /*通过自定义事件把事件发出了，在主页的地方可以使用*/
       })
+      // console.log(this.scroll);
+      this.scroll.refresh()
 
       //3.监听上拉事件
-      this.scroll.on('pullingUp', () => {
-        // console.log('上拉加载更多');
-        this.$emit('pullingUp')
-      })
+      // this.scroll.on('pullingUp', () => {
+      //   // console.log('上拉加载更多');
+      //   this.$emit('pullingUp')
+      // })
+
+      if (this.pullUpLoad) {
+        this.scroll.on('pullingUp', () => {
+          // console.log('监听到滚动到底部');
+          this.$emit('pullingUp')
+        })
+      }
     },
     methods: {
       scrollTo(x, y, time=500) {
@@ -58,7 +69,13 @@
       },
       finishPullUp() {
         this.scroll.finishPullUp()
-      }
+      },
+      refresh() {
+        this.scroll.refresh()
+      },
+      getScrollY() {
+        return this.scroll ? this.scroll.y : 0
+      },
     }
   }
 </script>

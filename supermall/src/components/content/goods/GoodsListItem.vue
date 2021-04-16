@@ -1,6 +1,8 @@
 <template>
-  <div class="goods-item">
-    <img src="goodsItem.show.img" alt=""> <img src="../../../assets/img/add/草莓.png" alt="">
+  <div class="goods-item" @click="itemClick">
+    <img src="goodsItem.show.img" alt="" @load="imageLoad">
+    <img src="../../../assets/img/add/草莓.png" alt=""
+         @load="imageLoad">
     <div class="goods-info">
       <p>{{goodsItem.title}}</p><p>title</p>
       <span class="price">{{goodsItem.price}}</span><span>price</span><br>
@@ -18,6 +20,20 @@
         default() {
           return {}
         }
+      }
+    },
+    methods: {
+      imageLoad() {
+        // console.log('imageload');
+        this.$bus.$emit('itemImageLoad') //发出事件
+      },
+      itemClick() {
+        this.$router.push('/detail' + this.goodsItem.iid)
+        // this.$router.push({
+        //   path: '/detail',
+        //   query:{}
+        // })
+
       }
     }
   }

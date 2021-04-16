@@ -5,19 +5,26 @@
       <div slot="center">香菇街</div>
       <!--需要替换谁就指定谁-->
     </nav-bar>
+    <tab-control
+      class="tabControl" v-show="isTabFixed"
+      :titles="['流行', '新款', '精选']"
+      @tabClick="tabClick"
+      ref="tabControl" >
+    </tab-control>
     <scroll class="content"
             ref="scroll"
             :probe-type="3"
             @scroll="contentScroll"
             :pull-up-load="true"
-            @pullingUp="loadMore"><!--不加冒号(v-bind)的话统一当成字符串-->
-      <home-swiper :banners="banners"></home-swiper>
+            @pullingUp="loadMore"><!--不加冒号(v-bind)的话统一当成字符串--><!--@pullingUp="loadMore"-->
+      <home-swiper :banners="banners" @swiperImageLoad="swiperImageLoad"></home-swiper>
       <home-recommend-view :recommends="recommends"></home-recommend-view>
       <feature-view></feature-view>
       <tab-control
         class="tab-control"
         :titles="['流行', '新款', '精选']"
-        @tabClick="tabClick">
+        @tabClick="tabClick"
+        ref="tabControl" >
       </tab-control>
       <goods-list :goods="showGoods"></goods-list>
     </scroll>
@@ -33,10 +40,10 @@
   import FeatureView from './childrenComponents/FeatureView'
 
   import NavBar from '../../components/common/navbar/NavBar'
-  import TabControl from 'components/content/tabControl/TabControl'
-  import GoodsList from 'components/content/goods/GoodsList'
-  import Scroll from 'components/common/scroll/Scroll'
-  import BackTop from 'components/content/backTop/BackTop'
+  import TabControl from '../../components/content/tabControl/TabControl'
+  import GoodsList from '../../components/content/goods/GoodsList'
+  import Scroll from '../../components/common/scroll/Scroll'
+  import BackTop from '../../components/content/backTop/BackTop'
 
   import {
     getHomeMultidata,
@@ -68,7 +75,10 @@
           'sell': {page:0, list: []}
         },
         currentType: 'pop',
-        isShowBackTop:false
+        isShowBackTop:false,
+        tabOffsetTop: 0,
+        isTabFixed: false,
+        saveY: 0
       }
     },
     computed: {
@@ -76,21 +86,56 @@
         return this.goods[this.currentType]/*.list*/
       }
     },
+    destroyed() {
+      console.log('home destroyed');
+    },
+    activated() {
+      this.$refs.scroll.scrollTo(0, this.saveY, 0)
+      this.$refs.scrolll.refresh()
+    },
+    deactivated() {
+      this.saveY = this.$refs.scroll.getScrollY()
+      // console.log(this.saveY);
+    },
     created() {
       //1.请求多个数据
-      this.getHomeMultidata('pop')
-      this.getHomeMultidata('new')
-      this.getHomeMultidata('sell')
+      this.getHomeMultidata()
+      // this.getHomeMultidata('new')
+      // this.getHomeMultidata('sell')
 
       //2.请求商品数据
-      this.getHomeGoods()
+      this.getHomeGoods('pop')
+      this.getHomeGoods('new')
+      this.getHomeGoods('sell')
+
+      //3.事件监听，监听item中图片加载完成/*去下面mounted做*/
+      // this.$bus.$on('itemImageLoad', () => {
+      //     console.log('----------------');
+      //     this.$refs.scroll.refresh()
+      // })
+
+
+    },
+    mounted() {
+      //1.图片加载完成的事件监听
+      this.debounce(this.$refs.scroll.refresh)
+
+      this.$bus.$on('itemImageLoad', () => {
+        console.log('图片加载完成的事件');
+        this.$refs.scroll.refresh()
+      })
+
+      //2.获取tabControl的offSetTop  赋值
+      //所有组件都有一个属性，$el：用于获取组件中的元素
+      this.tabOffsetTop = this.$refs.tabControl.$el.offsetTop
+
     },
     methods: {
       /**
       * 事件监听相关的方法
        */
       tabClick(index) {
-        console.log(index);
+        // console.log(index);
         switch (index) {
           case 0:
             this.currentType = 'pop'
@@ -111,14 +156,34 @@
       },
       contentScroll(position) {
         // console.log(position.y);
+        //1.判断backtop是否显示
         this.isShowBackTop = -position.y > 800 /*  ? 1 : 0  */
+
+        //2.决定tabControl是否吸顶
+        this.isTabFixed = (-position.y) > this.tabOffsetTop
       },
       loadMore() {
         console.log('上拉加载更多');
         this.getHomeGoods(this.currentType)
-
+      //
         this.$refs.scroll.scroll.refresh()
+      },
+      swiperImageLoad() {
 
+        // console.log(this.$refs.tabControl.$el.offsetOff);
+        // console.log(this.$refs.tabControl.$el);
+        this.tabOffsetTop = this.$refs.tabControl.$el.offsetTop
+      },
+
+      debounce(func, delay) {
+        let timer = null
+        return function() {
+          if (timer) clearTimeout(timer)
+
+          timer = setTimeout(() => {
+            func.apply(this, args)
+          }, delay)
+        }
       },
       /**
       * 网络请求相关的方法
@@ -142,7 +207,7 @@
           this.goods[type].page += 1
           /*数组.push(...数组名称)*/
 
-          this.$refs.scroll.finishPullUp()
+          // this.$refs.scroll.finishPullUp()
         })
       }
     }
@@ -188,4 +253,10 @@
     overflow: hidden;
     margin-top: 44px;
   }
+  /*.fixed {*/
+    /*position: fixed;*/
+    /*left: 0;*/
+    /*right: 0;*/
+    /*top: 44px;*/
+  /*}*/
 </style>
